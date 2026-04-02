@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block title %}Coworkspaces | NexusCoworking{% endblock %}
+{% block page_title %}Coworkspaces{% endblock %}
+{% block content %}
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;flex-wrap:wrap;gap:1rem">
+  <form class="search-bar" method="get" style="flex:1;margin-bottom:0">
+    <input type="text" name="search" value="{{ search }}" placeholder="Search coworkspaces...">
+    <select name="status" onchange="this.form.submit()">
+      <option value="">All Space Type</option>
+      <option value="hot_desk" {% if status_filter == 'hot_desk' %}selected{% endif %}>Hot Desk</option>
+      <option value="dedicated_desk" {% if status_filter == 'dedicated_desk' %}selected{% endif %}>Dedicated Desk</option>
+      <option value="private_office" {% if status_filter == 'private_office' %}selected{% endif %}>Private Office</option>
+      <option value="meeting_room" {% if status_filter == 'meeting_room' %}selected{% endif %}>Meeting Room</option>
+      <option value="event_space" {% if status_filter == 'event_space' %}selected{% endif %}>Event Space</option>
+    </select>
+    <button type="submit" class="btn btn-primary btn-sm">Search</button>
+  </form>
+  <a href="/coworkspaces/create/" class="btn btn-primary">+ New CoworkSpace</a>
+</div>
+
+<div class="card">
+  {% if records %}
+  <table>
+    <thead>
+      <tr><th>Name</th><th>Space Type</th><th>Capacity</th><th>Rate Per Day</th><th>Rate Per Month</th><th>Actions</th></tr>
+    </thead>
+    <tbody>
+      {% for r in records %}
+      <tr>
+        <td><a href="/coworkspaces/{{ r.pk }}/edit/"><strong>{{ r.name }}</strong></a></td>
+        <td><span class="badge badge-blue">{{ r.get_space_type_display }}</span></td>
+        <td>{{ r.capacity|default:"-" }}</td>
+        <td>{{ r.rate_per_day|floatformat:2 }}</td>
+        <td>{{ r.rate_per_month|floatformat:2 }}</td>
+        <td class="actions">
+          <a href="/coworkspaces/{{ r.pk }}/edit/" class="btn btn-primary btn-sm">Edit</a>
+          <form method="post" action="/coworkspaces/{{ r.pk }}/delete/" style="display:inline" onsubmit="return confirm('Delete?')">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger btn-sm">Del</button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <div class="empty">
+    <p>No coworkspaces found.</p>
+    <a href="/coworkspaces/create/" class="btn btn-primary" style="margin-top:1rem">Create CoworkSpace</a>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}
