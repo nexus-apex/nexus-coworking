@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block title %}Coworkmembers | NexusCoworking{% endblock %}
+{% block page_title %}Coworkmembers{% endblock %}
+{% block content %}
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;flex-wrap:wrap;gap:1rem">
+  <form class="search-bar" method="get" style="flex:1;margin-bottom:0">
+    <input type="text" name="search" value="{{ search }}" placeholder="Search coworkmembers...">
+    <select name="status" onchange="this.form.submit()">
+      <option value="">All Plan</option>
+      <option value="day_pass" {% if status_filter == 'day_pass' %}selected{% endif %}>Day Pass</option>
+      <option value="weekly" {% if status_filter == 'weekly' %}selected{% endif %}>Weekly</option>
+      <option value="monthly" {% if status_filter == 'monthly' %}selected{% endif %}>Monthly</option>
+      <option value="annual" {% if status_filter == 'annual' %}selected{% endif %}>Annual</option>
+    </select>
+    <button type="submit" class="btn btn-primary btn-sm">Search</button>
+  </form>
+  <a href="/coworkmembers/create/" class="btn btn-primary">+ New CoworkMember</a>
+</div>
+
+<div class="card">
+  {% if records %}
+  <table>
+    <thead>
+      <tr><th>Name</th><th>Email</th><th>Phone</th><th>Company</th><th>Plan</th><th>Actions</th></tr>
+    </thead>
+    <tbody>
+      {% for r in records %}
+      <tr>
+        <td><a href="/coworkmembers/{{ r.pk }}/edit/"><strong>{{ r.name }}</strong></a></td>
+        <td style="color:var(--muted)">{{ r.email|default:"-" }}</td>
+        <td>{{ r.phone|default:"-" }}</td>
+        <td>{{ r.company|default:"-" }}</td>
+        <td><span class="badge badge-blue">{{ r.get_plan_display }}</span></td>
+        <td class="actions">
+          <a href="/coworkmembers/{{ r.pk }}/edit/" class="btn btn-primary btn-sm">Edit</a>
+          <form method="post" action="/coworkmembers/{{ r.pk }}/delete/" style="display:inline" onsubmit="return confirm('Delete?')">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger btn-sm">Del</button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <div class="empty">
+    <p>No coworkmembers found.</p>
+    <a href="/coworkmembers/create/" class="btn btn-primary" style="margin-top:1rem">Create CoworkMember</a>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}
