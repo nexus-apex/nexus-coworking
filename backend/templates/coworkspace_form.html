@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% block title %}{% if editing %}Edit{% else %}New{% endif %} CoworkSpace | NexusCoworking{% endblock %}
+{% block page_title %}{% if editing %}Edit CoworkSpace{% else %}New CoworkSpace{% endif %}{% endblock %}
+{% block content %}
+<div class="card" style="max-width:750px">
+  <form method="post">
+    {% csrf_token %}
+    <div class="form-row">
+      <div class="form-group">
+        <label>Name</label>
+        <input type="text" name="name" value="{{ record.name|default:'' }}">
+      </div>
+      <div class="form-group">
+        <label>Space Type</label>
+        <select name="space_type">
+          <option value="hot_desk" {% if record.space_type == 'hot_desk' %}selected{% endif %}>Hot Desk</option>
+          <option value="dedicated_desk" {% if record.space_type == 'dedicated_desk' %}selected{% endif %}>Dedicated Desk</option>
+          <option value="private_office" {% if record.space_type == 'private_office' %}selected{% endif %}>Private Office</option>
+          <option value="meeting_room" {% if record.space_type == 'meeting_room' %}selected{% endif %}>Meeting Room</option>
+          <option value="event_space" {% if record.space_type == 'event_space' %}selected{% endif %}>Event Space</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Capacity</label>
+        <input type="number" name="capacity" value="{{ record.capacity|default:'0' }}">
+      </div>
+      <div class="form-group">
+        <label>Rate Per Day</label>
+        <input type="number" step="0.01" name="rate_per_day" value="{{ record.rate_per_day|default:'0' }}">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Rate Per Month</label>
+        <input type="number" step="0.01" name="rate_per_month" value="{{ record.rate_per_month|default:'0' }}">
+      </div>
+      <div class="form-group">
+        <label>Status</label>
+        <select name="status">
+          <option value="available" {% if record.status == 'available' %}selected{% endif %}>Available</option>
+          <option value="occupied" {% if record.status == 'occupied' %}selected{% endif %}>Occupied</option>
+          <option value="maintenance" {% if record.status == 'maintenance' %}selected{% endif %}>Maintenance</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Floor</label>
+        <input type="text" name="floor" value="{{ record.floor|default:'' }}">
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Amenities</label>
+      <textarea name="amenities">{{ record.amenities|default:'' }}</textarea>
+    </div>
+
+    <div style="display:flex;gap:0.75rem;margin-top:1rem">
+      <button type="submit" class="btn btn-primary">{% if editing %}Update{% else %}Create{% endif %} CoworkSpace</button>
+      <a href="/coworkspaces/" class="btn" style="background:var(--border);color:var(--text)">Cancel</a>
+    </div>
+  </form>
+</div>
+{% endblock %}
